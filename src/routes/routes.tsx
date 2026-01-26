@@ -18,6 +18,7 @@ import VoteParticipationPage from '../page/VoteParticipationPage/VoteParticipati
 import VoteCompletePage from '../page/VoteCompletePage/VoteCompletePage';
 import DebateVoteResultPage from '../page/DebateVoteResultPage/DebateVoteResultPage';
 import LanguageWrapper from './LanguageWrapper';
+import UpdateModalWrapper from '../components/UpdateModal/UpdateModalWrapper';
 
 const appRoutes = [
   {
@@ -127,6 +128,25 @@ const router = createBrowserRouter(
   ],
   {
     basename: import.meta.env.VITE_BASE_PATH || '/',
+    element: (
+      <>
+        <ErrorBoundaryWrapper />
+        <BackActionHandler />
+        <UpdateModalWrapper />
+      </>
+    ),
+    children: [
+      {
+        path: '/',
+        element: <LanguageWrapper />,
+        children: protectedAppRoutes, // 기본 언어(ko) 라우트
+      },
+      {
+        path: ':lang', // 다른 언어 라우트
+        element: <LanguageWrapper />,
+        children: protectedAppRoutes,
+      },
+    ],
   },
 );
 
