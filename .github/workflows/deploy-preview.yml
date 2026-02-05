@@ -12,7 +12,7 @@ concurrency:
 jobs:
   deploy-preview:
     runs-on: ubuntu-latest
-    environment: DEPLOY_PREVIEW
+    environment: PREVIEW_ENV
     permissions:
       pull-requests: write
       contents: read
