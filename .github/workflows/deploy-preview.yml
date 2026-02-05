@@ -60,7 +60,7 @@ jobs:
         with:
           script: |
             const prNumber = context.payload.pull_request.number;
-            const domain = '${{ vars.PREVIEW_DOMAIN }}';
+            const domain = '${{ vars.VITE_SHARE_BASE_URL }}';
             const url = `https://${domain}/pr-${prNumber}/`;
 
             const body = `## 🚀 Preview 배포 완료!
