@@ -49,18 +49,38 @@ jobs:
         run: |
           aws s3 sync ./dist s3://${{ secrets.AWS_PREVIEW_BUCKET_NAME }}/pr-${{ github.event.pull_request.number }}/ --delete
 
+      - name: Deploy OAuth Redirect Handler
+        run: |
+          cat > /tmp/oauth-handler.html << 'OAUTH_EOF'
+          <!DOCTYPE html>
+          <html>
+          <head><title>Redirecting...</title></head>
+          <body>
+          <script>
+            var params = new URLSearchParams(window.location.search);
+            var state = params.get('state');
+            if (state) {
+              params.delete('state');
+              window.location.replace(state + '/oauth?' + params.toString());
+            }
+          </script>
+          </body>
+          </html>
+          OAUTH_EOF
+          aws s3 cp /tmp/oauth-handler.html s3://${{ secrets.AWS_PREVIEW_BUCKET_NAME }}/oauth --content-type "text/html"
+
       - name: Invalidate CloudFront Cache
         run: |
           aws cloudfront create-invalidation \
             --distribution-id ${{ secrets.AWS_PREVIEW_CLOUDFRONT_ID }} \
-            --paths "/pr-${{ github.event.pull_request.number }}/*"
+            --paths "/pr-${{ github.event.pull_request.number }}/*" "/oauth"
 
       - name: Comment Preview URL on PR
         uses: actions/github-script@v7
         with:
           script: |
             const prNumber = context.payload.pull_request.number;
-            const domain = '${{ vars.VITE_SHARE_BASE_URL }}';
+            const domain = '${{ vars.PREVIEW_DOMAIN }}';
             const url = `https://${domain}/pr-${prNumber}/`;
 
             const body = `## 🚀 Preview 배포 완료!
