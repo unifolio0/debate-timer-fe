@@ -25,7 +25,9 @@ export function createTableShareUrl(
   data: DebateTableData,
 ): string {
   const encoded = encodeDebateTableData(data);
-  return `${baseUrl}/share?data=${encoded}`;
+  const basePath = import.meta.env.VITE_BASE_PATH;
+  const pathPrefix = basePath && basePath !== '/' ? basePath : '';
+  return `${baseUrl}${pathPrefix}/share?data=${encoded}`;
 }
 
 export function extractTableShareUrl(url: string): DebateTableData | null {
