@@ -8,7 +8,7 @@ on:
 jobs:
   cleanup:
     runs-on: ubuntu-latest
-    environment: DEPLOY_PREVIEW
+    environment: PREVIEW_ENV
     permissions:
       pull-requests: write
 
